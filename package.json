@@ -1,0 +1,13 @@
+{
+  "name": "covermark-activity",
+  "version": "2.0.0",
+  "description": "Covermark Link Landing Management System backed by Turso (libSQL)",
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "init-db": "node scripts/init-db.js"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0"
+  }
+}

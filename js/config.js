@@ -1,8 +1,8 @@
 // Configuration details for Covermark Link Landing Management System
 const CONFIG = {
-  // Replace with your published Google Apps Script Web App Deployment URL
-  API_URL: "https://script.google.com/macros/s/AKfycbw2xN0vbEKliiHHnjli_9Wc4BNBNlYv20mq2x-uLHNuX-9XsWLbQg2v8ZSTQv7qVXoD/exec",
+  // Use Vercel Serverless API (Turso Backend) by default
+  API_URL: "/api",
   
-  // API Key token for authentication (must match API_KEY in Code.gs)
+  // API Key token for authentication (matches API_KEY in Vercel Environment Variables)
   API_KEY: "COVERMARK_SECRET_API_KEY"
 };
