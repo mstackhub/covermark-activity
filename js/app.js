@@ -58,21 +58,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // 1. Settings & API URL Configuration
 function initSettings() {
-  // Load from CONFIG first, fallback to localStorage
+  // Clear any old Google Apps Script URL stored in localStorage
   let savedUrl = localStorage.getItem("covermark_api_url");
   let savedKey = localStorage.getItem("covermark_api_key");
   
-  if (typeof CONFIG !== 'undefined') {
-    STATE.apiUrl = CONFIG.API_URL || savedUrl || '';
-    STATE.apiKey = CONFIG.API_KEY || savedKey || 'COVERMARK_SECRET_API_KEY';
-  } else {
-    STATE.apiUrl = savedUrl || '';
-    STATE.apiKey = savedKey || 'COVERMARK_SECRET_API_KEY';
+  if (savedUrl && savedUrl.includes("script.google.com")) {
+    localStorage.removeItem("covermark_api_url");
+    savedUrl = null;
   }
   
+  STATE.apiUrl = (typeof CONFIG !== 'undefined' && CONFIG.API_URL) ? CONFIG.API_URL : (savedUrl || '/api');
+  STATE.apiKey = (typeof CONFIG !== 'undefined' && CONFIG.API_KEY) ? CONFIG.API_KEY : (savedKey || 'COVERMARK_SECRET_API_KEY');
+  
   // Populate Settings form
-  document.getElementById('settings-api-url').value = STATE.apiUrl;
-  document.getElementById('settings-api-key').value = STATE.apiKey;
+  const urlInput = document.getElementById('settings-api-url');
+  const keyInput = document.getElementById('settings-api-key');
+  if (urlInput) urlInput.value = STATE.apiUrl;
+  if (keyInput) keyInput.value = STATE.apiKey;
   
   updateApiBadge();
 }
