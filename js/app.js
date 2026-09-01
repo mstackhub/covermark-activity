@@ -162,6 +162,7 @@ async function handleLogin(e) {
     const ip = await fetchIp();
     const response = await fetch(STATE.apiUrl, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "login",
         apiKey: STATE.apiKey,
@@ -202,8 +203,9 @@ async function handleLogout() {
   if (STATE.apiUrl && STATE.currentAdmin) {
     fetch(STATE.apiUrl, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        action: "trackClick", // simple call or use custom logout log if desired
+        action: "logout",
         apiKey: STATE.apiKey,
         admin: STATE.currentAdmin.name,
         ip: ip
@@ -660,6 +662,7 @@ async function duplicateCampaign(id) {
     const ip = await fetchIp();
     const response = await fetch(STATE.apiUrl, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "duplicateLandingPage",
         apiKey: STATE.apiKey,
@@ -989,6 +992,7 @@ async function uploadBase64Image(fileName, mimeType, base64Data) {
     const ip = await fetchIp();
     const response = await fetch(STATE.apiUrl, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "uploadImage",
         apiKey: STATE.apiKey,
@@ -1091,6 +1095,7 @@ async function saveBuilderLandingPage() {
     const ip = await fetchIp();
     const response = await fetch(STATE.apiUrl, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: action,
         apiKey: STATE.apiKey,
@@ -1449,6 +1454,7 @@ async function restoreHistoricalVersion(logId) {
     const ip = await fetchIp();
     const response = await fetch(STATE.apiUrl, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "restoreVersion",
         apiKey: STATE.apiKey,
@@ -1602,6 +1608,7 @@ function handleCsvImport() {
       const ip = await fetchIp();
       const response = await fetch(STATE.apiUrl, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "importCSV",
           apiKey: STATE.apiKey,
@@ -1912,6 +1919,7 @@ function setupEventListeners() {
       const ip = await fetchIp();
       const response = await fetch(STATE.apiUrl, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "deleteLandingPage",
           apiKey: STATE.apiKey,

@@ -22,9 +22,24 @@ module.exports = async (req, res) => {
   const db = getDb();
 
   try {
+    let body = req.body || {};
+    if (typeof body === 'string' && body.trim().length > 0) {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        body = {};
+      }
+    } else if (Buffer.isBuffer(body)) {
+      try {
+        body = JSON.parse(body.toString('utf8'));
+      } catch (e) {
+        body = {};
+      }
+    }
+
     const isPost = req.method === 'POST';
-    const params = isPost ? (req.body || {}) : (req.query || {});
-    const action = params.action || req.query.action;
+    const params = isPost ? Object.assign({}, req.query || {}, body) : (req.query || {});
+    const action = params.action || (req.query && req.query.action) || (body && body.action);
 
     if (!action) {
       return res.status(400).json({ success: false, message: 'Missing action parameter' });
