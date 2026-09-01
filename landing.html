@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Covermark Thailand</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  
+  <!-- SEO Meta Tags - Dynamic placeholders -->
+  <meta name="description" content="Covermark Landing Page">
+  <meta property="og:title" content="Covermark">
+  <meta property="og:description" content="Covermark Landing Page">
+  <meta property="og:image" content="">
+  <meta property="og:type" content="website">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom Styling inline for performance & fast load -->
+  <style>
+    :root {
+      --color-primary: #015C46;
+      --color-secondary: #0E7A5F;
+      --color-bg: #F7FAF8;
+      --color-card-bg: #FFFFFF;
+      --color-border: #DDE8E4;
+      --color-text-main: #2A3B35;
+      --color-text-muted: #6B7C75;
+      --color-danger: #E53935;
+      --color-success: #2E7D32;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans Thai', 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      background-color: #ffffff;
+      color: var(--color-text-main);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+    
+    .mobile-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #000000;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 30px rgba(1, 92, 70, 0.05);
+      position: relative;
+    }
+    
+    /* Header & Brand */
+    .header-logo {
+      display: none; /* Hidden for now */
+      padding: 16px;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid var(--color-border);
+      background-color: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .header-logo img {
+      height: 28px;
+      object-fit: contain;
+    }
+    
+    /* Skeleton Loading State */
+    .skeleton-loader {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 24px;
+    }
+    
+    .skeleton {
+      background: linear-gradient(90deg, #111111 25%, #222222 50%, #111111 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+    }
+    
+    .skeleton-banner {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 0px;
+    }
+    
+    .skeleton-brand-bar {
+      height: 52px;
+      background-color: #000000;
+      width: 100%;
+      margin-top: -16px;
+      margin-bottom: 8px;
+    }
+    
+    .skeleton-title {
+      height: 28px;
+      width: 70%;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    
+    .skeleton-text {
+      height: 16px;
+      width: calc(100% - 40px);
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    .skeleton-text.short {
+      width: 50%;
+    }
+    
+    .skeleton-btn {
+      height: 48px;
+      width: calc(100% - 40px);
+      margin-left: 20px;
+      margin-right: 20px;
+      border-radius: 0px;
+      margin-top: 10px;
+    }
+    
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    /* Main Content Area */
+    .content-area {
+      display: none; /* Shown after load */
+      flex-direction: column;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .banner-image {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .brand-bar {
+      background-color: #000000;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .brand-bar-logo {
+      height: 17px;
+      width: auto;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+    
+    .info-section {
+      padding: 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .headline {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.4;
+    }
+    
+    .message {
+      font-size: 15px;
+      color: #e0e8e5;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    
+    .buttons-section {
+      padding: 0 12px 24px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    
+    .buttons-section.layout-horizontal {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .buttons-section.layout-horizontal .action-btn {
+      flex: 1 1 calc(50% - 5px);
+      min-width: 120px;
+    }
+    
+    /* Button Styles */
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 0px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    }
+    
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+    
+    .action-btn-primary {
+      background-color: var(--color-primary);
+      color: #ffffff;
+    }
+    .action-btn-primary:active {
+      background-color: var(--color-secondary);
+    }
+    
+    .action-btn-secondary {
+      background-color: var(--color-secondary);
+      color: #ffffff;
+    }
+    .action-btn-secondary:active {
+      background-color: var(--color-primary);
+    }
+    
+    .action-btn-outline {
+      background-color: transparent;
+      border-color: #ffffff;
+      color: #ffffff;
+      box-shadow: none;
+    }
+    .action-btn-outline:active {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Expired & Error View */
+    .status-view {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      flex-grow: 1;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    
+    .status-icon {
+      width: 80px;
+      height: 80px;
+      background-color: rgba(231, 76, 60, 0.1);
+      border: 2px solid rgba(231, 76, 60, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      color: #e74c3c;
+      padding: 18px;
+      box-sizing: border-box;
+    }
+    
+    .status-icon svg {
+      width: 44px;
+      height: 44px;
+    }
+    
+    .status-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+    
+    .status-desc {
+      font-size: 15px;
+      color: #e0e8e5;
+      line-height: 1.6;
+      margin-bottom: 36px;
+      max-width: 320px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="mobile-container">
+    <!-- Header logo -->
+    <div class="header-logo">
+      <img src="/covermark-logo.png" alt="Covermark Logo" style="height: 28px; width: auto; object-fit: contain;">
+    </div>
+    
+    <!-- Skeleton Loading State -->
+    <div id="skeleton" class="skeleton-loader">
+      <div class="skeleton skeleton-banner"></div>
+      <div class="skeleton-brand-bar"></div>
+      <div class="skeleton skeleton-title"></div>
+      <div class="skeleton skeleton-text"></div>
+      <div class="skeleton skeleton-text"></div>
+      <div class="skeleton skeleton-text short"></div>
+      <div class="skeleton skeleton-btn"></div>
+      <div class="skeleton skeleton-btn"></div>
+    </div>
+    
+    <!-- Main Landing Page Content -->
+    <div id="content" class="content-area">
+      <img id="banner" class="banner-image" src="" alt="Campaign Banner" style="display: none;">
+      
+      <div class="brand-bar">
+        <img src="/covermark-logo.png" alt="Covermark Logo" class="brand-bar-logo">
+      </div>
+      
+      <div class="info-section">
+        <h1 id="headline" class="headline"></h1>
+        <p id="message" class="message"></p>
+      </div>
+      
+      <div id="buttons-container" class="buttons-section">
+        <!-- Dynamic buttons go here -->
+      </div>
+    </div>
+    
+    <!-- Expired or Error State -->
+    <div id="status-view" class="status-view">
+      <div class="status-icon">
+        <!-- Error Exclamation Icon -->
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+      </div>
+      <h2 id="status-title" class="status-title">แคมเปญนี้สิ้นสุดลงแล้ว</h2>
+      <p id="status-desc" class="status-desc">ขออภัยด้วยค่ะ แคมเปญนี้ได้หมดเวลาลงแล้ว หรือยังไม่เปิดให้บริการในขณะนี้</p>
+      <a id="status-redirect-btn" href="https://line.me/R/ti/p/@covermark" class="action-btn action-btn-primary" style="width: 100%;">กลับสู่ LINE OA</a>
+    </div>
+
+  </div>
+
+  <!-- Inline config to avoid dependency on external config.js load order -->
+  <script>
+    // Inline configuration - no external file dependency
+    const CONFIG = {
+      API_URL: "https://script.google.com/macros/s/AKfycbw2xN0vbEKliiHHnjli_9Wc4BNBNlYv20mq2x-uLHNuX-9XsWLbQg2v8ZSTQv7qVXoD/exec",
+      API_KEY: "COVERMARK_SECRET_API_KEY"
+    };
+  </script>
+  
+  <script>
+    // Logic for loading campaign page and analytics
+    document.addEventListener("DOMContentLoaded", async function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      // Get slug: try ?slug= param first, then extract from /l/<slug> path
+      let slug = urlParams.get("slug");
+      if (!slug) {
+        const pathMatch = window.location.pathname.match(/\/l\/([^\/\?]+)/);
+        if (pathMatch) slug = pathMatch[1];
+      }
+      
+      const skeleton = document.getElementById("skeleton");
+      const content = document.getElementById("content");
+      const statusView = document.getElementById("status-view");
+      
+      // API URL directly from inline config
+      const apiUrl = CONFIG.API_URL;
+      
+      if (!slug) {
+        showError("ลิงก์ไม่ถูกต้อง", "ไม่พบข้อมูลรหัสแคมเปญที่คุณต้องการเรียกใช้งาน");
+        return;
+      }
+      
+      if (!apiUrl) {
+        showError("ยังไม่ได้ระบุ API URL", "กรุณาตั้งค่า Google Apps Script Web App API URL");
+        return;
+      }
+      
+      // Caching Load Check (Stale-While-Revalidate pattern)
+      const cacheKey = `covermark_lp_cache_${slug}`;
+      const cachedDataStr = localStorage.getItem(cacheKey);
+      let cacheLoaded = false;
+      
+      if (cachedDataStr && urlParams.get("preview") !== "true") {
+        try {
+          const cachedPayload = JSON.parse(cachedDataStr);
+          // cache is valid for 1 hour
+          if (new Date().getTime() - cachedPayload.timestamp < 60 * 60 * 1000) {
+            const cachedData = cachedPayload.data;
+            // Quick check expire & schedule on cached data before displaying
+            const now = new Date();
+            let isExpired = false;
+            let isNotPublishedYet = false;
+            
+            if (cachedData.publish_at && now < new Date(cachedData.publish_at)) {
+              isNotPublishedYet = true;
+            }
+            if (cachedData.expire_at && now > new Date(cachedData.expire_at)) {
+              isExpired = true;
+            }
+            
+            if (cachedData.status === "published" && !isExpired && !isNotPublishedYet) {
+              renderPage(cachedData, apiUrl);
+              cacheLoaded = true;
+            }
+          }
+        } catch (e) {
+          localStorage.removeItem(cacheKey);
+        }
+      }
+      
+      try {
+        // Fetch landing page by slug
+        const response = await fetch(`${apiUrl}?action=getLandingPageBySlug&slug=${encodeURIComponent(slug)}`);
+        const result = await response.json();
+        
+        if (!result.success || !result.data) {
+          showError("ไม่พบแคมเปญ", result.message || "ไม่พบหน้านี้ในระบบ กรุณาตรวจสอบลิงก์อีกครั้ง");
+          localStorage.removeItem(cacheKey);
+          return;
+        }
+        
+        const data = result.data;
+        
+        // Save in cache (if not preview)
+        if (urlParams.get("preview") !== "true") {
+          localStorage.setItem(cacheKey, JSON.stringify({
+            timestamp: new Date().getTime(),
+            data: data
+          }));
+        }
+        
+        // Expire and Schedule Logic Check
+        const now = new Date();
+        
+        // 1. Check Schedule Publish
+        if (data.publish_at) {
+          const publishDate = new Date(data.publish_at);
+          if (now < publishDate) {
+            // Not yet published
+            if (urlParams.get("preview") === "true") {
+              // Admin previewing, allow with a warning
+              console.warn("Preview Mode: This campaign is scheduled for future publish at " + data.publish_at);
+            } else {
+              showError("แคมเปญยังไม่เริ่มต้น", "แคมเปญนี้จะพร้อมเปิดใช้งานในวันที่ " + formatThaiDateTime(data.publish_at));
+              return;
+            }
+          }
+        }
+        
+        // 2. Check Expire
+        if (data.expire_at) {
+          const expireDate = new Date(data.expire_at);
+          if (now > expireDate) {
+            // Expired!
+            if (urlParams.get("preview") === "true") {
+              // Admin previewing, allow with a warning
+              console.warn("Preview Mode: This campaign has expired at " + data.expire_at);
+            } else {
+              // If redirect_url is configured, do redirect
+              if (data.redirect_url) {
+                document.getElementById("status-desc").innerText = "ระบบกำลังนำท่านไปสู่หน้าใหม่...";
+                document.getElementById("status-redirect-btn").href = data.redirect_url;
+                showExpiredView(data.redirect_url);
+                setTimeout(() => {
+                  window.location.href = data.redirect_url;
+                }, 2000);
+              } else {
+                showExpiredView();
+              }
+              return;
+            }
+          }
+        }
+        
+        // 3. Check Draft status
+        if (data.status === "draft" && urlParams.get("preview") !== "true") {
+          showError("ขออภัยค่ะ", "แคมเปญนี้ยังไม่ได้เปิดเผยแพร่สาธารณะ");
+          return;
+        }
+        
+        // Display page content
+        renderPage(data, apiUrl);
+        
+        // Track View (only if not preview)
+        if (urlParams.get("preview") !== "true") {
+          trackPageView(data.id, apiUrl);
+        }
+        
+      } catch (err) {
+        console.error(err);
+        showError("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อระบบหลังบ้านได้ในขณะนี้ (" + err.message + ")");
+      }
+    });
+    
+    function renderPage(data, apiUrl) {
+      document.getElementById("skeleton").style.display = "none";
+      
+      const content = document.getElementById("content");
+      content.style.display = "flex";
+      
+      // Update SEO Title and Description dynamically
+      if (data.seo_title) {
+        document.title = data.seo_title;
+        updateMetaTag("property", "og:title", data.seo_title);
+      } else {
+        document.title = data.headline;
+      }
+      
+      if (data.meta_description) {
+        updateMetaTag("name", "description", data.meta_description);
+        updateMetaTag("property", "og:description", data.meta_description);
+      }
+      
+      // Banner
+      const banner = document.getElementById("banner");
+      if (data.image_url) {
+        banner.src = data.image_url;
+        banner.style.display = "block";
+        updateMetaTag("property", "og:image", data.image_url);
+      }
+      
+      // Headline & Message
+      const headlineEl = document.getElementById("headline");
+      const msgEl = document.getElementById("message");
+      const infoSection = document.querySelector(".info-section");
+      
+      const hasHeadline = data.headline && data.headline.trim() !== "";
+      const hasMsg = data.message && data.message.trim() !== "";
+      
+      if (hasHeadline) {
+        headlineEl.innerText = data.headline;
+        headlineEl.style.display = "block";
+      } else {
+        headlineEl.style.display = "none";
+      }
+      
+      if (hasMsg) {
+        msgEl.innerText = data.message;
+        msgEl.style.display = "block";
+      } else {
+        msgEl.style.display = "none";
+      }
+      
+      if (infoSection) {
+        if (hasHeadline || hasMsg) {
+          infoSection.style.display = "flex";
+        } else {
+          infoSection.style.display = "none";
+        }
+      }
+      
+      // Buttons
+      const buttonsContainer = document.getElementById("buttons-container");
+      buttonsContainer.innerHTML = "";
+      
+      if (data.button_layout === "horizontal") {
+        buttonsContainer.className = "buttons-section layout-horizontal";
+      } else {
+        buttonsContainer.className = "buttons-section layout-vertical";
+      }
+      
+      if (data.buttons && data.buttons.length > 0) {
+        data.buttons.forEach((btn, index) => {
+          const btnEl = document.createElement("a");
+          btnEl.className = `action-btn action-btn-${btn.style || 'primary'}`;
+          btnEl.innerText = btn.title;
+          btnEl.href = btn.url;
+          
+          // Button Click Tracking Action
+          btnEl.addEventListener("click", function(e) {
+            e.preventDefault();
+            const destinationUrl = this.href;
+            
+            // Send tracking call and then redirect
+            // Fast redirection: run fetch in background or wait briefly
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("preview") !== "true") {
+              fetch(apiUrl, {
+                method: "POST",
+                body: JSON.stringify({
+                  action: "trackClick",
+                  landingId: data.id,
+                  buttonId: btn.id
+                }),
+                keepalive: true
+              }).catch(err => console.error("Tracking error", err));
+            }
+            
+            // Redirect immediately
+            window.location.href = destinationUrl;
+          });
+          
+          buttonsContainer.appendChild(btnEl);
+        });
+      }
+    }
+    
+    async function trackPageView(landingId, apiUrl) {
+      // Check unique visitor status using localStorage clientId
+      let clientId = localStorage.getItem("covermark_clientId");
+      let isUnique = false;
+      if (!clientId) {
+        clientId = "client_" + new Date().getTime() + "_" + Math.floor(Math.random() * 1000000);
+        localStorage.setItem("covermark_clientId", clientId);
+        isUnique = true;
+      }
+      
+      // Call tracking endpoint in background
+      try {
+        await fetch(apiUrl, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "trackView",
+            landingId: landingId,
+            isUnique: isUnique
+          })
+        });
+      } catch (err) {
+        console.error("View tracking error", err);
+      }
+    }
+    
+    function showExpiredView(redirectUrl = null) {
+      document.getElementById("skeleton").style.display = "none";
+      document.getElementById("content").style.display = "none";
+      
+      const statusView = document.getElementById("status-view");
+      statusView.style.display = "flex";
+      
+      document.getElementById("status-title").innerText = "แคมเปญนี้สิ้นสุดลงแล้ว";
+      document.getElementById("status-desc").innerText = redirectUrl 
+        ? "แคมเปญนี้ได้หมดเวลาลงแล้ว ระบบกำลังพาท่านไปยังลิงก์ปลายทาง..." 
+        : "ขออภัยด้วยค่ะ แคมเปญนี้ได้สิ้นสุดเวลาลงแล้ว ท่านสามารถกดย้อนกลับไปยังช่องทางหลักของ Covermark ได้เลยค่ะ";
+      
+      if (redirectUrl) {
+        document.getElementById("status-redirect-btn").href = redirectUrl;
+      }
+    }
+    
+    function showError(title, message) {
+      document.getElementById("skeleton").style.display = "none";
+      document.getElementById("content").style.display = "none";
+      
+      const statusView = document.getElementById("status-view");
+      statusView.style.display = "flex";
+      
+      document.getElementById("status-title").innerText = title;
+      document.getElementById("status-desc").innerText = message;
+    }
+    
+    function updateMetaTag(attrName, attrValue, contentValue) {
+      let meta = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute(attrName, attrValue);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute("content", contentValue);
+    }
+    
+    function formatThaiDateTime(isoString) {
+      if (!isoString) return "";
+      const d = new Date(isoString);
+      const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543} เวลา ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} น.`;
+    }
+  </script>
+</body>
+</html>

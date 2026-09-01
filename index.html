@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แผงควบคุม - Covermark Link Landing Management</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Libraries via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Login Page Overlay -->
+  <div id="login-overlay" class="login-overlay">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="covermark-logo.png" alt="Covermark Logo" style="height: 28px; max-width: 100%; margin-bottom: 12px; object-fit: contain;">
+        <p>Link Landing Management System</p>
+      </div>
+      <form id="login-form">
+        <div class="input-group" style="margin-bottom: 16px;">
+          <label for="login-emp-id" style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">รหัสพนักงาน (Employee ID)</label>
+          <input type="text" id="login-emp-id" class="input-control" required placeholder="กรอกรหัสพนักงานของคุณ">
+        </div>
+        <div class="input-group" style="margin-bottom: 24px;">
+          <label for="login-password" style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">รหัสผ่าน</label>
+          <input type="password" id="login-password" class="input-control" required placeholder="กรอกรหัสผ่าน">
+        </div>
+        <div id="login-error" style="display:none; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px; display: none; align-items: center; gap: 8px;">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span id="login-error-text"></span>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">เข้าสู่ระบบ</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- App Wrapper -->
+  <div id="app-container" class="app-container" style="display: none;">
+    <!-- Sidebar Backdrop (mobile overlay) -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <img src="covermark-logo.png" alt="Covermark Logo" style="height: 32px; width: auto; object-fit: contain; margin-bottom: 6px;">
+        <span>LANDING PAGE SYSTEM</span>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="sidebar-item active" data-target="dashboard">
+          <a href="#dashboard">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+              <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+              <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+              <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+            </svg>
+            แดชบอร์ด
+          </a>
+        </li>
+        <li class="sidebar-item" data-target="landing-pages">
+          <a href="#landing-pages">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            หน้า Landing Pages
+          </a>
+        </li>
+        <li class="sidebar-item" data-target="analytics" style="display: none;">
+          <a href="#analytics">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path>
+            </svg>
+            สถิติและการวิเคราะห์
+          </a>
+        </li>
+        <li class="sidebar-item" data-target="activity-logs">
+          <a href="#activity-logs">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+            </svg>
+            ประวัติกิจกรรม
+          </a>
+        </li>
+        <li class="sidebar-item" data-target="settings">
+          <a href="#settings">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.991l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.645-.869l.214-1.28z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            ตั้งค่าระบบ API
+          </a>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <div class="admin-info">
+          <span id="display-admin-name" class="admin-name">คุณผู้ดูแล</span>
+          <span id="display-admin-role" class="admin-role">Admin</span>
+        </div>
+        <button id="logout-button" class="logout-btn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+          </svg>
+          ออกจากระบบ
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      
+      <!-- Top Sticky Header -->
+      <header class="top-bar">
+        <button class="menu-toggle" id="menu-toggle">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+        <div class="top-bar-title" id="page-title">แดชบอร์ด</div>
+        <div>
+          <!-- System Status Badge -->
+          <span class="badge badge-published" id="api-status-badge" style="gap:6px; align-items:center;">
+            <span style="width:8px; height:8px; background-color:currentColor; border-radius:50%;"></span>
+            API Connected
+          </span>
+        </div>
+      </header>
+      
+      <!-- Section 1: Dashboard Home -->
+      <section class="content-section active" id="sec-dashboard">
+        <div class="dashboard-grid">
+          <!-- Card 1: Total Pages -->
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-primary">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 12 12 17 22 12"></polyline>
+                <polyline points="2 17 12 22 22 17"></polyline>
+              </svg>
+            </div>
+            <div class="stat-details">
+              <h3>แคมเปญทั้งหมด</h3>
+              <div class="stat-number" id="stat-total-pages">0</div>
+            </div>
+          </div>
+          
+          <!-- Card 2: Published -->
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-success">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <div class="stat-details">
+              <h3>เผยแพร่แล้ว (Published)</h3>
+              <div class="stat-number" id="stat-published-pages">0</div>
+            </div>
+          </div>
+          
+          <!-- Card 3: Draft -->
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-info">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </div>
+            <div class="stat-details">
+              <h3>ฉบับร่าง (Draft)</h3>
+              <div class="stat-number" id="stat-draft-pages">0</div>
+            </div>
+          </div>
+          
+          <!-- Card 4: Expired -->
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-danger">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <line x1="10" y1="2" x2="14" y2="2"></line>
+                <line x1="12" y1="14" x2="15" y2="11"></line>
+                <circle cx="12" cy="14" r="8"></circle>
+              </svg>
+            </div>
+            <div class="stat-details">
+              <h3>หมดอายุแล้ว (Expired)</h3>
+              <div class="stat-number" id="stat-expired-pages">0</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="dashboard-sections">
+          <!-- Recent Activity Logs -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">ประวัติการทำงานล่าสุด</h2>
+              <button class="btn btn-outline btn-sm" onclick="navigateToSection('activity-logs')">ดูทั้งหมด</button>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>วันเวลา</th>
+                      <th>แอดมิน</th>
+                      <th>กิจกรรม</th>
+                      <th>แคมเปญ</th>
+                      <th>ข้อมูลเชื่อมโยง</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-activity-table-body">
+                    <tr><td colspan="5"><div class="empty-state">ไม่มีประวัติกิจกรรมล่าสุด</div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quick Action panel -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">จัดการด่วน</h2>
+            </div>
+            <div class="card-body">
+              <div class="quick-actions-list">
+                <button class="btn btn-primary" onclick="openCreateLandingPageBuilder()">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                  สร้าง Landing Page ใหม่
+                </button>
+                <button class="btn btn-outline" onclick="openImportCSVModal()">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                  </svg>
+                  นำเข้าไฟล์ CSV
+                </button>
+                <button class="btn btn-secondary" onclick="navigateToSection('analytics')" style="display:none;">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  ดูรายงานเชิงลึก
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 2: Landing Pages List -->
+      <section class="content-section" id="sec-landing-pages">
+        <div class="toolbar">
+          <div class="search-filter-box">
+            <!-- Search Text -->
+            <div class="input-group">
+              <input type="text" id="lp-search-input" class="input-control" placeholder="ค้นหา Headline หรือ Slug...">
+            </div>
+            <!-- Status Filter -->
+            <div class="input-group">
+              <select id="lp-status-filter" class="input-control">
+                <option value="all">ทุกสถานะ</option>
+                <option value="published">เผยแพร่แล้ว (Published)</option>
+                <option value="draft">ฉบับร่าง (Draft)</option>
+                <option value="expired">หมดอายุแล้ว (Expired)</option>
+              </select>
+            </div>
+            <!-- Sort dropdown -->
+            <div class="input-group">
+              <select id="lp-sort-select" class="input-control">
+                <option value="newest">สร้างล่าสุด</option>
+                <option value="oldest">สร้างเก่าสุด</option>
+                <option value="headline-asc">หัวข้อ (ก-ฮ)</option>
+                <option value="headline-desc">หัวข้อ (ฮ-ก)</option>
+              </select>
+            </div>
+          </div>
+          <!-- Create landing page action -->
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-outline" onclick="exportLandingPagesToCSV()">
+              ส่งออก CSV
+            </button>
+            <button class="btn btn-primary" onclick="openCreateLandingPageBuilder()">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+              </svg>
+              สร้าง Landing Page
+            </button>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-body" style="padding: 0;">
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>แบนเนอร์</th>
+                    <th>หัวข้อหลัก (Headline)</th>
+                    <th>Slug</th>
+                    <th>จำนวนปุ่ม</th>
+                    <th>วันหมดอายุ</th>
+                    <th>สถานะ</th>
+                    <th>การดำเนินการ</th>
+                  </tr>
+                </thead>
+                <tbody id="landing-pages-table-body">
+                  <tr><td colspan="7"><div class="empty-state">กำลังโหลดข้อมูลแคมเปญ...</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 3: Create & Edit Landing Page Builder -->
+      <section class="content-section" id="sec-builder">
+        <div class="toolbar" style="margin-bottom: 30px;">
+          <div>
+            <h2 id="builder-mode-title" style="font-size: 20px; font-weight: 700; color: var(--color-primary);">สร้าง Landing Page ใหม่</h2>
+            <p id="builder-mode-subtitle" style="font-size: 13px; color: var(--color-text-muted);">กรอกข้อมูลแคมเปญด้านล่างเพื่อแสดงผลแบบเรียลไทม์</p>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-outline" onclick="navigateToSection('landing-pages')">ยกเลิก</button>
+            <button class="btn btn-primary" id="builder-save-btn">บันทึกข้อมูล</button>
+          </div>
+        </div>
+        
+        <div class="builder-layout">
+          <!-- Left Column: Form Settings -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">ข้อมูลแคมเปญ & ปุ่มลิงก์</span>
+            </div>
+            
+            <div class="card-body">
+              <form id="builder-form">
+                <input type="hidden" id="builder-lp-id">
+                
+                <!-- Section 1: Basic Info -->
+                <div class="form-grid" style="margin-bottom: 30px;">
+                  
+                  <!-- Campaign Title -->
+                  <div class="input-group form-group-full">
+                    <label for="builder-title" style="font-size: 13px; font-weight: 600;">ชื่อแคมเปญ (Campaign Name) *</label>
+                    <input type="text" id="builder-title" class="input-control" required placeholder="กรอกชื่อแคมเปญสำหรับอ้างอิงและดูสถิติหลังบ้าน (เช่น แคมเปญแจกแป้งฝุ่น กรกฎาคม)">
+                  </div>
+                  
+                  <!-- Headline -->
+                  <div class="input-group form-group-full">
+                    <label for="builder-headline" style="font-size: 13px; font-weight: 600;">หัวข้อหลัก (Headline)</label>
+                    <input type="text" id="builder-headline" class="input-control" placeholder="กรอกข้อความหัวเรื่องเด่นด้านบน">
+                  </div>
+                  
+                  <!-- Message -->
+                  <div class="input-group form-group-full">
+                    <label for="builder-message" style="font-size: 13px; font-weight: 600;">รายละเอียดเพิ่มเติม (Message)</label>
+                    <textarea id="builder-message" class="input-control" rows="4" placeholder="กรอกคำเชิญชวน หรือรายละเอียดความคืบหน้า..." style="resize: vertical;"></textarea>
+                  </div>
+                  
+                  <!-- Image Upload -->
+                  <div class="input-group form-group-full">
+                    <label style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">แบนเนอร์ภาพหลัก (Banner Image) - รองรับ jpg, png, webp (ไม่จำกัดขนาดไฟล์)</label>
+                    <div class="image-upload-wrapper" id="builder-image-zone">
+                      <div class="upload-icon">☁️</div>
+                      <div style="font-size:13px; font-weight:600; color:var(--color-primary);">คลิกเพื่อเลือกไฟล์ หรือวางรูปภาพที่นี่</div>
+                      <div style="font-size:11px; color:var(--color-text-muted); margin-top:4px;">หากเลือกไฟล์ระบบจะส่งภาพขึ้นคลาวด์ Google Drive อัตโนมัติ</div>
+                      <input type="file" id="builder-image-input" accept="image/*" style="display:none;">
+                    </div>
+                    <input type="hidden" id="builder-image-url">
+                    <img id="builder-image-preview" class="image-preview-box" src="" alt="Banner Preview">
+                    <div id="image-upload-spinner" style="display:none; font-size:12px; color:var(--color-secondary); margin-top:8px; align-items:center; gap:8px;">
+                      <span style="display:inline-block; width:12px; height:12px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite;"></span>
+                      กำลังย่อรูปและอัปโหลดภาพขึ้นคลาวด์ โปรดรอสักครู่...
+                    </div>
+                  </div>
+                  
+                  <!-- Slug -->
+                  <div class="input-group">
+                    <label for="builder-slug" style="font-size: 13px; font-weight: 600;">กำหนดสลัก (Slug URL) *</label>
+                    <input type="text" id="builder-slug" class="input-control" required placeholder="เช่น covermark-july">
+                    <span class="help-text">ลิงก์คุณจะเป็น: domain.com/l/<strong id="builder-slug-preview-text">slug</strong></span>
+                  </div>
+                  
+                  <!-- Status -->
+                  <div class="input-group">
+                    <label for="builder-status" style="font-size: 13px; font-weight: 600;">สถานะ (Status)</label>
+                    <select id="builder-status" class="input-control">
+                      <option value="draft">ฉบับร่าง (Draft) - ซ่อนชั่วคราว</option>
+                      <option value="published">เผยแพร่แล้ว (Published) - เปิดให้เข้าใช้</option>
+                    </select>
+                  </div>
+                                 <!-- SEO Fields (hidden for now) -->
+                  <div style="display: none;">
+                  <hr style="grid-column: span 2; border: 0; border-top: 1px solid var(--color-border); margin: 10px 0;">
+                  
+                  <!-- SEO Title -->
+                  <div class="input-group">
+                    <label for="builder-seo-title" style="font-size: 13px; font-weight: 600;">SEO Title</label>
+                    <input type="text" id="builder-seo-title" class="input-control" placeholder="เช่น แคมเปญสุดพิเศษประจำเดือนกรกฎาคม | Covermark">
+                  </div>
+                  
+                  <!-- SEO Meta Description -->
+                  <div class="input-group">
+                    <label for="builder-meta-description" style="font-size: 13px; font-weight: 600;">SEO Meta Description</label>
+                    <input type="text" id="builder-meta-description" class="input-control" placeholder="แคมเปญแจกคูปองทดลองแป้งรองพื้นหน้าฉ่ำฟรีที่สาขา...">
+                  </div>
+                  </div>
+                  
+                  <!-- Schedule Publish (Start) -->
+                  <div class="input-group">
+                    <label for="builder-publish-at" style="font-size: 13px; font-weight: 600;">เริ่มการเผยแพร่อัตโนมัติ (Schedule Start)</label>
+                    <input type="datetime-local" id="builder-publish-at" class="input-control">
+                    <span class="help-text">ปล่อยว่างหากต้องการให้แสดงผลทันที</span>
+                  </div>
+                  
+                  <!-- Expire DateTime -->
+                  <div class="input-group">
+                    <label for="builder-expire-at" style="font-size: 13px; font-weight: 600;">สิ้นสุดการเผยแพร่ (Schedule End)</label>
+                    <input type="datetime-local" id="builder-expire-at" class="input-control">
+                    <span class="help-text">ปล่อยว่างหากไม่อยากให้แคมเปญนี้หมดอายุ</span>
+                  </div>
+                  
+                  <!-- Expired Redirect URL -->
+                  <div class="input-group form-group-full">
+                    <label for="builder-redirect-url" style="font-size: 13px; font-weight: 600;">ลิงก์เมื่อหมดอายุ (Expired Redirect URL)</label>
+                    <input type="url" id="builder-redirect-url" class="input-control" placeholder="https://line.me/R/ti/p/@covermark">
+                    <span class="help-text">เมื่อแคมเปญหมดอายุ จะส่งผู้ใช้ไปยังเว็บปลายทางนี้ทันที (หากเว้นว่างไว้จะแสดงหน้าหมดอายุของระบบ)</span>
+                  </div>
+                  
+                  <!-- Divider -->
+                  <hr style="grid-column: span 2; border: 0; border-top: 1px solid var(--color-border); margin: 10px 0;">
+                  
+                  <!-- SEO Title -->
+                  <div class="input-group">
+                    <label for="builder-seo-title" style="font-size: 13px; font-weight: 600;">SEO Title</label>
+                    <input type="text" id="builder-seo-title" class="input-control" placeholder="เช่น แคมเปญสุดพิเศษประจำเดือนกรกฎาคม | Covermark">
+                  </div>
+                  
+                  <!-- SEO Meta Description -->
+                  <div class="input-group">
+                    <label for="builder-meta-description" style="font-size: 13px; font-weight: 600;">SEO Meta Description</label>
+                    <input type="text" id="builder-meta-description" class="input-control" placeholder="แคมเปญแจกคูปองทดลองแป้งรองพื้นหน้าฉ่ำฟรีที่สาขา...">
+                  </div>
+                  
+                </div>
+                
+                <!-- Section 2: Buttons list -->
+                <div style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 12px;">
+                  <div style="display:flex; align-items:center; gap:16px; flex-wrap: wrap;">
+                    <h3 style="font-size: 15px; font-weight: 600; color: var(--color-primary); margin:0;">รายการปุ่มลิงก์ (Buttons List)</h3>
+                    <select id="builder-button-layout" class="input-control" style="width: auto; padding: 4px 8px; font-size: 13px; height: 32px; border-radius: 0px; margin:0;">
+                      <option value="vertical">จัดวางแนวตั้ง / แถว (Vertical Stack)</option>
+                      <option value="horizontal">จัดวางแนวนอน / คอลัมน์ (Horizontal Grid)</option>
+                    </select>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="builder-add-button-btn">
+                    + เพิ่มปุ่มลิงก์
+                  </button>
+                </div>
+                
+                <!-- Button items container -->
+                <div id="builder-buttons-list-container">
+                  <!-- Dynamic button form rows go here -->
+                </div>
+                
+              </form>
+            </div>
+          </div>
+          
+          <!-- Right Column: Live Mobile Preview -->
+          <div class="preview-sticky">
+            <div class="phone-mockup">
+              <!-- Phone notch -->
+              <div style="height: 24px; background-color:#1c2b26; display:flex; justify-content:center; align-items:center; position:relative;">
+                <div style="width: 120px; height: 16px; background-color:#000000; border-radius:0 0 12px 12px; position:absolute; top:0;"></div>
+              </div>
+              
+              <!-- Screen View -->
+              <div class="phone-screen">
+                <div class="phone-header">
+                  <img src="covermark-logo.png" alt="Covermark Logo" style="height: 18px; width: auto; object-fit: contain;">
+                </div>
+                
+                <img id="prev-banner" class="phone-banner" src="" alt="Banner Preview">
+                
+                <div class="phone-brand-bar">
+                  <img src="covermark-logo.png" alt="Covermark Logo" class="phone-brand-bar-logo">
+                </div>
+                
+                <div class="phone-content">
+                  <div id="prev-headline" class="phone-headline">หัวข้อหลักแคมเปญ</div>
+                  <div id="prev-message" class="phone-message">รายละเอียดแคมเปญของคุณจะอัปเดตแบบเรียลไทม์ที่นี่</div>
+                </div>
+                
+                <div id="prev-buttons-container" class="phone-buttons">
+                  <!-- Dynamic preview of buttons -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 4: Analytics View -->
+      <section class="content-section" id="sec-analytics">
+        <div class="toolbar" style="margin-bottom: 30px;">
+          <div class="search-filter-box">
+            <!-- Landing page Selector -->
+            <div class="input-group">
+              <select id="analytics-lp-selector" class="input-control">
+                <option value="">ดูรวมทุกแคมเปญ</option>
+              </select>
+            </div>
+            <!-- Range Selector -->
+            <div class="input-group">
+              <select id="analytics-range-selector" class="input-control">
+                <option value="daily">รายวัน (Daily)</option>
+                <option value="weekly" selected>รายสัปดาห์ (Weekly)</option>
+                <option value="monthly">รายเดือน (Monthly)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-outline" onclick="exportAnalyticsToCSV()">
+              ส่งออกข้อมูลเป็น CSV
+            </button>
+          </div>
+        </div>
+        
+        <!-- Summary Stats cards for Analytics -->
+        <div class="dashboard-grid" style="margin-bottom: 30px;" id="analytics-summary-cards">
+          <!-- Views Card -->
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-primary">📊</div>
+            <div class="stat-details">
+              <h3>ยอดเข้าชมรวม (Views)</h3>
+              <div class="stat-number" id="anal-total-views">0</div>
+            </div>
+          </div>
+          <!-- Unique Visitors Card -->
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-info">👤</div>
+            <div class="stat-details">
+              <h3>ยอดผู้เข้าชม (Uniques)</h3>
+              <div class="stat-number" id="anal-total-uniques">0</div>
+            </div>
+          </div>
+          <!-- Clicks Card -->
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-success">🖱️</div>
+            <div class="stat-details">
+              <h3>ยอดคลิกปุ่มรวม (Clicks)</h3>
+              <div class="stat-number" id="anal-total-clicks">0</div>
+            </div>
+          </div>
+          <!-- CTR Card -->
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-success" style="background-color:rgba(14,122,95,0.08);">📈</div>
+            <div class="stat-details">
+              <h3>อัตรา CTR เฉลี่ย</h3>
+              <div class="stat-number" id="anal-avg-ctr">0%</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Chart & Top Buttons Breakdown -->
+        <div class="dashboard-sections">
+          <!-- Graph Line Chart -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">กราฟแสดงการเติบโตยอดเข้าชมและการคลิก</span>
+            </div>
+            <div class="card-body">
+              <div style="height: 350px; position: relative; width: 100%;">
+                <canvas id="analytics-line-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Top Button clicks breakdown -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">สถิติคลิกแยกตามปุ่มลิงก์ (Clicks per Button)</span>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ปุ่ม</th>
+                      <th>ยอดคลิก</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analytics-buttons-table-body">
+                    <tr><td colspan="2"><div class="empty-state">ไม่มีข้อมูลการคลิกสำหรับช่วงเวลานี้</div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 5: Activity Logs & Version History -->
+      <section class="content-section" id="sec-activity-logs">
+        <div class="toolbar" style="margin-bottom: 24px;">
+          <div class="search-filter-box">
+            <!-- Filter Admin -->
+            <div class="input-group">
+              <select id="log-admin-filter" class="input-control">
+                <option value="all">ทุกแอดมิน</option>
+              </select>
+            </div>
+            <!-- Filter Action -->
+            <div class="input-group">
+              <select id="log-action-filter" class="input-control">
+                <option value="all">ทุกกิจกรรม</option>
+                <option value="create">สร้าง (Create)</option>
+                <option value="update">แก้ไข (Update)</option>
+                <option value="delete">ลบ (Delete)</option>
+                <option value="duplicate">ทำซ้ำ (Duplicate)</option>
+                <option value="restore">กู้คืน (Restore)</option>
+                <option value="login">เข้าสู่ระบบ (Login)</option>
+              </select>
+            </div>
+            <!-- Filter Date -->
+            <div class="input-group">
+              <input type="date" id="log-date-filter" class="input-control">
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>วันเวลา</th>
+                    <th>ผู้ปฏิบัติงาน</th>
+                    <th>กิจกรรม</th>
+                    <th>รายละเอียดตาราง</th>
+                    <th>ID ข้อมูล</th>
+                    <th>IP แอดเดรส</th>
+                    <th>ความแตกต่าง / กู้คืน</th>
+                  </tr>
+                </thead>
+                <tbody id="activity-logs-table-body">
+                  <tr><td colspan="7"><div class="empty-state">กำลังโหลดข้อมูลประวัติกิจกรรม...</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 6: Settings View -->
+      <section class="content-section" id="sec-settings">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+          <div class="card-header">
+            <span class="card-title">ตั้งค่าการเชื่อมต่อ Google API Backend</span>
+          </div>
+          <div class="card-body">
+            <form id="settings-form">
+              <div class="input-group" style="margin-bottom: 20px;">
+                <label for="settings-api-url" style="font-size: 13px; font-weight: 600;">Google Apps Script Web App API URL *</label>
+                <input type="url" id="settings-api-url" class="input-control" required placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+                <span class="help-text">กรอก URL ของ Web App ที่กด Deploy มาจาก Google Apps Script</span>
+              </div>
+              <div class="input-group" style="margin-bottom: 24px;">
+                <label for="settings-api-key" style="font-size: 13px; font-weight: 600;">API Secret Key Token *</label>
+                <input type="text" id="settings-api-key" class="input-control" required placeholder="COVERMARK_SECRET_API_KEY">
+                <span class="help-text">รหัสโทเค็นสำหรับเชื่อมต่อ ให้ตรงกับค่าที่ตั้งไว้ใน Code.gs</span>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">บันทึกข้อมูลการตั้งค่า</button>
+            </form>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+  </div>
+
+  <!-- MODAL: Confirmation modal for deletion -->
+  <div class="modal-overlay" id="confirm-delete-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">ยืนยันการลบแคมเปญ</span>
+        <button class="modal-close" onclick="closeModal('confirm-delete-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>คุณแน่ใจหรือไม่ว่าจะลบแคมเปญ <strong id="delete-lp-title-preview" class="text-danger">Campaign</strong> ใช่หรือไม่?</p>
+        <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 8px;">* ข้อมูลปุ่มกดและรายงานสถิติต่างๆ จะถูกลบออกไปด้วย และไม่สามารถกู้คืนผ่านทางลบโดยตรงได้ (ยกเว้นระบบประวัติเวอร์ชัน)</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('confirm-delete-modal')">ยกเลิก</button>
+        <button class="btn btn-danger btn-sm" id="confirm-delete-submit-btn">ยืนยันลบข้อมูล</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: QR Code display -->
+  <div class="modal-overlay" id="qrcode-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">QR Code & ลิงก์สำหรับ LINE OA</span>
+        <button class="modal-close" onclick="closeModal('qrcode-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center;">
+        <div id="qrcode-canvas" style="background:#ffffff; padding:16px; border: 1px solid var(--color-border); border-radius:12px;"></div>
+        <div style="width:100%;">
+          <label style="font-size:12px; font-weight:600; color:var(--color-primary); display:block; margin-bottom:6px; text-align:left;">ลิงก์ปลายทาง (Clean URL):</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="qrcode-link-input" class="input-control" readonly style="flex-grow:1;">
+            <button class="btn btn-secondary btn-sm" id="qrcode-copy-btn">คัดลอกลิงก์</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('qrcode-modal')">ปิดหน้าต่าง</button>
+        <button class="btn btn-primary btn-sm" id="qrcode-download-btn">ดาวน์โหลด QR Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Version History Diff Viewer -->
+  <div class="modal-overlay" id="diff-modal">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <span class="modal-title" id="diff-modal-title">เปรียบเทียบข้อมูลความเปลี่ยนแปลง</span>
+        <button class="modal-close" onclick="closeModal('diff-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:16px; font-size:13px; line-height:1.5;">
+          <strong>ประวัติแก้ไขโดย:</strong> <span id="diff-admin-name">-</span> | <strong>เวลา:</strong> <span id="diff-time">-</span>
+        </div>
+        <div class="diff-container">
+          <div>
+            <div class="diff-title">ค่าข้อมูลก่อนหน้านี้ (Old Value)</div>
+            <div class="diff-box" id="diff-old-box">ไม่มีข้อมูลเดิม</div>
+          </div>
+          <div>
+            <div class="diff-title">ค่าข้อมูลใหม่ (New Value)</div>
+            <div class="diff-box" id="diff-new-box">ไม่มีข้อมูลใหม่</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('diff-modal')">ปิด</button>
+        <button class="btn btn-secondary btn-sm" id="diff-restore-btn">กู้คืนกลับสู่เวอร์ชันนี้ (Restore)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CSV Import -->
+  <div class="modal-overlay" id="import-csv-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">นำเข้าแคมเปญด้วยไฟล์ CSV (Bulk Import)</span>
+        <button class="modal-close" onclick="closeModal('import-csv-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 13px; font-weight: 600; margin-bottom: 6px; display:block;">เลือกไฟล์ CSV สำหรับนำเข้าข้อมูล</label>
+          <input type="file" id="import-csv-file-input" accept=".csv" class="input-control" style="width:100%;">
+        </div>
+        <div style="font-size:12px; color:var(--color-text-muted); line-height:1.6;">
+          <strong>คำแนะนำโครงสร้างคอลัมน์ของ CSV:</strong>
+          <p>ต้องมีแถวหัวตาราง (Header) และคอลัมน์เรียงตามนี้:</p>
+          <p style="background:#f0f2f1; padding:8px; border-radius:6px; font-family:monospace; margin-top:4px; font-size:11px;">
+            headline, message, slug, image_url, status, publish_at, expire_at, seo_title, meta_description, redirect_url, buttons
+          </p>
+          <p style="margin-top:8px;">* คอลัมน์ <strong>buttons</strong> ให้ระบุเป็นรูปแบบ:</p>
+          <p style="background:#f0f2f1; padding:8px; border-radius:6px; font-family:monospace; margin-top:4px; font-size:11px;">
+            ปุ่มที่1|http://link1.com|primary, ปุ่มที่2|http://link2.com|outline
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('import-csv-modal')">ยกเลิก</button>
+        <button class="btn btn-primary btn-sm" id="import-csv-submit-btn">เริ่มนำเข้าข้อมูล</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

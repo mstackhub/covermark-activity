@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/l/:slug", "destination": "/landing.html?slug=:slug" }
+  ]
+}
