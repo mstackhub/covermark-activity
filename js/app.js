@@ -1161,6 +1161,15 @@ async function saveBuilderLandingPage() {
       })
     });
     
+    if (response.status === 413) {
+      throw new Error("ขนาดไฟล์ (รูปภาพหรือไฟล์เสียง) มีขนาดใหญ่เกินขีดจำกัดของเซิร์ฟเวอร์ (สูงสุดไม่เกิน 2.5MB) กรุณาใช้ไฟล์ขนาดเล็กลง หรือใส่เป็นลิงก์ URL แทนครับ");
+    }
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`เซิร์ฟเวอร์ตอบกลับผิดพลาด (${response.status}): ${errorText.substring(0, 100)}`);
+    }
+
     const result = await response.json();
     if (result.success) {
       // ── UX: Show success state on button ──
@@ -2085,10 +2094,11 @@ async function handleAudioFileUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  // Max 8MB
-  const maxBytes = 8 * 1024 * 1024;
+  // Max 2.5MB limit for direct Base64 inline payload
+  const maxBytes = 2.5 * 1024 * 1024;
   if (file.size > maxBytes) {
-    showToast("ขนาดไฟล์เสียงใหญ่เกิน 8MB กรุณาเลือกไฟล์ที่ขนาดเล็กกว่า 8MB เพื่อความเร็วในการโหลด", "warning");
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    showToast(`ไฟล์เสียงมีขนาด ${sizeMB}MB (เกินขนาดที่รองรับแบบอัปโหลดตรง 2.5MB) กรุณาใช้ไฟล์ขนาดเล็ก หรือใส่เป็นลิงก์ URL ไฟล์เสียงแทนครับ`, "warning");
     return;
   }
 
