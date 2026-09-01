@@ -53,6 +53,11 @@ async function ensureTables() {
         meta_description TEXT,
         redirect_url TEXT,
         button_layout TEXT DEFAULT 'vertical',
+        audio_url TEXT DEFAULT '',
+        audio_enabled INTEGER DEFAULT 0,
+        audio_show_icon INTEGER DEFAULT 1,
+        audio_volume REAL DEFAULT 0.5,
+        audio_loop INTEGER DEFAULT 1,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       );`,
@@ -122,10 +127,25 @@ async function ensureTables() {
        VALUES ('ADM001', 'ผู้ดูแลระบบ', 'admin', 'CvM#Pass2026', 'super_admin', datetime('now'));`
     ]);
 
+    // Ensure audio columns exist on older database schemas
+    const alterCols = [
+      'ALTER TABLE landing_pages ADD COLUMN audio_url TEXT DEFAULT ""',
+      'ALTER TABLE landing_pages ADD COLUMN audio_enabled INTEGER DEFAULT 0',
+      'ALTER TABLE landing_pages ADD COLUMN audio_show_icon INTEGER DEFAULT 1',
+      'ALTER TABLE landing_pages ADD COLUMN audio_volume REAL DEFAULT 0.5',
+      'ALTER TABLE landing_pages ADD COLUMN audio_loop INTEGER DEFAULT 1'
+    ];
+    for (const alterQuery of alterCols) {
+      try {
+        await db.execute(alterQuery);
+      } catch (e) {
+        // Ignored if column already exists
+      }
+    }
+
     isDbInitialized = true;
   } catch (err) {
     console.error('Error ensuring Turso database tables:', err);
-    // Don't crash here so caller gets appropriate error if DB credentials fail
   }
 }
 

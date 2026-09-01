@@ -1182,3 +1182,126 @@ tr:hover td {
   60% { transform: translateX(-5px); }
   80% { transform: translateX(5px); }
 }
+
+/* ========================================================
+   Audio Widget & Switch Toggle Styles
+   ======================================================== */
+
+/* Switch Component */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--color-primary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+/* Floating Speaker Button */
+.audio-floating-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.audio-floating-btn:hover {
+  transform: scale(1.08);
+  background: rgba(1, 92, 70, 0.85);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.audio-floating-btn.playing {
+  animation: soundPulse 2s infinite;
+  background: rgba(1, 92, 70, 0.85);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.audio-floating-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+}
+
+@keyframes soundPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(1, 92, 70, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(1, 92, 70, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(1, 92, 70, 0);
+  }
+}
+
+/* Audio Settings Card inside Builder */
+.audio-card-box {
+  background: #f8faf9;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 18px;
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.audio-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+

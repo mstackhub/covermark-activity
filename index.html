@@ -456,6 +456,77 @@
                     <input type="text" id="builder-meta-description" class="input-control" placeholder="แคมเปญแจกคูปองทดลองแป้งรองพื้นหน้าฉ่ำฟรีที่สาขา...">
                   </div>
                   
+                  <!-- Section: Background Audio Settings -->
+                  <div class="audio-card-box form-group-full" style="grid-column: span 2;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:18px;">🎵</span>
+                        <div>
+                          <strong style="font-size: 14px; color: var(--color-primary);">ระบบเสียงเพลงพื้นหลัง (Background Music)</strong>
+                          <div style="font-size: 11px; color: var(--color-text-muted);">เปิดเพลงบรรเลงคลอเบาๆ สร้างบรรยากาศหรูหราขณะชมแคมเปญ</div>
+                        </div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="builder-audio-enabled">
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                    
+                    <div id="builder-audio-settings-body" style="display: none; flex-direction: column; gap: 12px; border-top: 1px dashed var(--color-border); padding-top: 14px; margin-top: 10px;">
+                      <!-- Show Speaker Icon Toggle -->
+                      <div class="audio-toggle-row">
+                        <label for="builder-audio-show-icon" style="font-size: 12px; font-weight: 500; cursor: pointer;">
+                          แสดงไอคอนลำโพงมุมขวาบน (Floating Speaker Icon)
+                        </label>
+                        <label class="toggle-switch">
+                          <input type="checkbox" id="builder-audio-show-icon" checked>
+                          <span class="toggle-slider"></span>
+                        </label>
+                      </div>
+
+                      <!-- Preset Music Selector -->
+                      <div>
+                        <label for="builder-audio-preset" style="font-size: 12px; font-weight: 600; margin-bottom: 4px; display: block;">เลือกเพลงสำเร็จรูป (Preset BGM)</label>
+                        <select id="builder-audio-preset" class="input-control" style="font-size: 13px;">
+                          <option value="">-- กำหนดลิงก์เพลงเอง (Custom URL) --</option>
+                          <option value="https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3">🎼 1. Luxury Serene (บรรเลงหรูหรา นุ่มนวล)</option>
+                          <option value="https://assets.mixkit.co/music/preview/mixkit-gentle-piano-love-story-557.mp3">🎹 2. Gentle Elegant Piano (เปียโนอบอุ่น สบายใจ)</option>
+                          <option value="https://assets.mixkit.co/music/preview/mixkit-relaxing-in-nature-522.mp3">🌿 3. Beauty Spa & Nature (ผ่อนคลาย สไตล์สปา)</option>
+                        </select>
+                      </div>
+
+                      <!-- Audio URL Input with Test Play Button -->
+                      <div>
+                        <label for="builder-audio-url" style="font-size: 12px; font-weight: 600; margin-bottom: 4px; display: block;">ลิงก์ไฟล์เสียง (Audio URL - mp3, m4a, wav)</label>
+                        <div style="display: flex; gap: 8px;">
+                          <input type="url" id="builder-audio-url" class="input-control" placeholder="https://domain.com/sound.mp3" style="flex: 1;">
+                          <button type="button" class="btn btn-secondary btn-sm" id="builder-audio-test-btn" style="white-space: nowrap; padding: 0 14px;">
+                            ▶️ ทดลองฟัง
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Volume slider & Loop -->
+                      <div style="display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                          <label for="builder-audio-volume" style="font-size: 12px; font-weight: 600;">ระดับความดัง:</label>
+                          <select id="builder-audio-volume" class="input-control" style="width: auto; font-size: 12px; height: 32px; padding: 2px 8px;">
+                            <option value="0.2">20% (เบามาก)</option>
+                            <option value="0.4" selected>40% (กำลังดี - แนะนำ)</option>
+                            <option value="0.6">60% (ปานกลาง)</option>
+                            <option value="0.8">80% (ดังชัดเจน)</option>
+                            <option value="1.0">100% (ดังสุด)</option>
+                          </select>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                          <label for="builder-audio-loop" style="font-size: 12px; font-weight: 500; cursor: pointer;">เล่นวนซ้ำ (Loop)</label>
+                          <input type="checkbox" id="builder-audio-loop" checked style="cursor: pointer;">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
                 </div>
                 
                 <!-- Section 2: Buttons list -->
@@ -490,7 +561,14 @@
               </div>
               
               <!-- Screen View -->
-              <div class="phone-screen">
+              <div class="phone-screen" style="position: relative;">
+                <!-- Floating Speaker Icon Preview -->
+                <button type="button" class="audio-floating-btn" id="prev-audio-btn" style="display: none;" title="เสียงพื้นหลัง">
+                  <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                  </svg>
+                </button>
+
                 <div class="phone-header">
                   <img src="covermark-logo.png" alt="Covermark Logo" style="height: 18px; width: auto; object-fit: contain;">
                 </div>

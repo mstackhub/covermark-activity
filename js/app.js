@@ -598,6 +598,16 @@ function openCreateLandingPageBuilder() {
   document.getElementById('builder-seo-title').value = "";
   document.getElementById('builder-meta-description').value = "";
   
+  // Background Audio fields reset
+  document.getElementById('builder-audio-enabled').checked = false;
+  document.getElementById('builder-audio-show-icon').checked = true;
+  document.getElementById('builder-audio-preset').value = "";
+  document.getElementById('builder-audio-url').value = "";
+  document.getElementById('builder-audio-volume').value = "0.4";
+  document.getElementById('builder-audio-loop').checked = true;
+  document.getElementById('builder-audio-settings-body').style.display = "none";
+  stopAudioPreview();
+  
   document.getElementById('builder-image-preview').style.display = 'none';
   document.getElementById('builder-image-preview').src = '';
   
@@ -632,6 +642,28 @@ function openEditLandingPageBuilder(id) {
   document.getElementById('builder-redirect-url').value = lp.redirect_url || '';
   document.getElementById('builder-seo-title').value = lp.seo_title || '';
   document.getElementById('builder-meta-description').value = lp.meta_description || '';
+  
+  // Audio fields population
+  const isAudioOn = lp.audio_enabled == 1 || lp.audio_enabled === true;
+  document.getElementById('builder-audio-enabled').checked = isAudioOn;
+  document.getElementById('builder-audio-show-icon').checked = lp.audio_show_icon !== 0 && lp.audio_show_icon !== false;
+  document.getElementById('builder-audio-url').value = lp.audio_url || '';
+  
+  const presetSelect = document.getElementById('builder-audio-preset');
+  let matchedPreset = false;
+  for (let i = 0; i < presetSelect.options.length; i++) {
+    if (presetSelect.options[i].value && presetSelect.options[i].value === lp.audio_url) {
+      presetSelect.selectedIndex = i;
+      matchedPreset = true;
+      break;
+    }
+  }
+  if (!matchedPreset) presetSelect.value = "";
+
+  document.getElementById('builder-audio-volume').value = lp.audio_volume !== undefined ? String(lp.audio_volume) : '0.4';
+  document.getElementById('builder-audio-loop').checked = lp.audio_loop !== 0 && lp.audio_loop !== false;
+  document.getElementById('builder-audio-settings-body').style.display = isAudioOn ? "flex" : "none";
+  stopAudioPreview();
   
   const previewImg = document.getElementById('builder-image-preview');
   if (lp.image_url) {
@@ -900,6 +932,18 @@ function updateLivePreview() {
     prevBanner.style.display = 'none';
   }
   
+  // Audio Floating Button Preview
+  const prevAudioBtn = document.getElementById('prev-audio-btn');
+  const isAudioEnabled = document.getElementById('builder-audio-enabled') ? document.getElementById('builder-audio-enabled').checked : false;
+  const isAudioIconShown = document.getElementById('builder-audio-show-icon') ? document.getElementById('builder-audio-show-icon').checked : true;
+  if (prevAudioBtn) {
+    if (isAudioEnabled && isAudioIconShown) {
+      prevAudioBtn.style.display = 'flex';
+    } else {
+      prevAudioBtn.style.display = 'none';
+    }
+  }
+
   // Preview Buttons
   const btnContainer = document.getElementById('prev-buttons-container');
   btnContainer.innerHTML = "";
@@ -1060,6 +1104,13 @@ async function saveBuilderLandingPage() {
     }
   }
   
+  // Background Audio fields
+  const audioEnabled = document.getElementById('builder-audio-enabled') ? document.getElementById('builder-audio-enabled').checked : false;
+  const audioShowIcon = document.getElementById('builder-audio-show-icon') ? document.getElementById('builder-audio-show-icon').checked : true;
+  const audioUrl = (document.getElementById('builder-audio-url').value || '').trim();
+  const audioVolume = parseFloat(document.getElementById('builder-audio-volume').value) || 0.4;
+  const audioLoop = document.getElementById('builder-audio-loop') ? document.getElementById('builder-audio-loop').checked : true;
+
   const payload = {
     id: id || undefined,
     title: title,
@@ -1074,6 +1125,11 @@ async function saveBuilderLandingPage() {
     redirect_url: redirectUrl,
     seo_title: seoTitle,
     meta_description: metaDescription,
+    audio_enabled: audioEnabled ? 1 : 0,
+    audio_show_icon: audioShowIcon ? 1 : 0,
+    audio_url: audioUrl,
+    audio_volume: audioVolume,
+    audio_loop: audioLoop ? 1 : 0,
     buttons: STATE.builderButtons
   };
   
@@ -1959,4 +2015,95 @@ function setupEventListeners() {
   
   // CSV Import submit
   document.getElementById('import-csv-submit-btn').addEventListener('click', handleCsvImport);
+
+  // ── Background Audio Builder Events ──
+  const audioEnabledToggle = document.getElementById('builder-audio-enabled');
+  const audioShowIconToggle = document.getElementById('builder-audio-show-icon');
+  const audioPresetSelect = document.getElementById('builder-audio-preset');
+  const audioUrlInput = document.getElementById('builder-audio-url');
+  const audioTestBtn = document.getElementById('builder-audio-test-btn');
+  const audioSettingsBody = document.getElementById('builder-audio-settings-body');
+
+  if (audioEnabledToggle) {
+    audioEnabledToggle.addEventListener('change', function() {
+      if (audioSettingsBody) {
+        audioSettingsBody.style.display = this.checked ? 'flex' : 'none';
+      }
+      updateLivePreview();
+    });
+  }
+
+  if (audioShowIconToggle) {
+    audioShowIconToggle.addEventListener('change', updateLivePreview);
+  }
+
+  if (audioPresetSelect) {
+    audioPresetSelect.addEventListener('change', function() {
+      if (this.value) {
+        if (audioUrlInput) audioUrlInput.value = this.value;
+      }
+      stopAudioPreview();
+    });
+  }
+
+  if (audioUrlInput) {
+    audioUrlInput.addEventListener('input', function() {
+      stopAudioPreview();
+    });
+  }
+
+  if (audioTestBtn) {
+    audioTestBtn.addEventListener('click', toggleAudioPreview);
+  }
 }
+
+// ── Audio Preview in Admin ──
+let previewAudioObj = null;
+
+function stopAudioPreview() {
+  if (previewAudioObj) {
+    previewAudioObj.pause();
+    previewAudioObj.currentTime = 0;
+    previewAudioObj = null;
+  }
+  const btn = document.getElementById('builder-audio-test-btn');
+  if (btn) btn.innerHTML = "▶️ ทดลองฟัง";
+}
+
+function toggleAudioPreview() {
+  const urlInput = document.getElementById('builder-audio-url');
+  const url = (urlInput ? urlInput.value : '').trim();
+  const btn = document.getElementById('builder-audio-test-btn');
+
+  if (!url) {
+    showToast("กรุณาระบุลิงก์ไฟล์เสียง หรือเลือกเพลงสำเร็จรูปก่อน", "warning");
+    return;
+  }
+
+  if (previewAudioObj && !previewAudioObj.paused) {
+    stopAudioPreview();
+    return;
+  }
+
+  try {
+    stopAudioPreview();
+    previewAudioObj = new Audio(url);
+    const vol = parseFloat(document.getElementById('builder-audio-volume').value) || 0.4;
+    previewAudioObj.volume = vol;
+
+    if (btn) btn.innerHTML = "⏹️ หยุดฟัง";
+
+    previewAudioObj.play().catch(err => {
+      stopAudioPreview();
+      showToast("ไม่สามารถเล่นไฟล์เสียงจาก URL นี้ได้: " + err.message, "danger");
+    });
+
+    previewAudioObj.onended = () => {
+      stopAudioPreview();
+    };
+  } catch (err) {
+    stopAudioPreview();
+    showToast("เกิดข้อผิดพลาดในการโหลดเสียง: " + err.message, "danger");
+  }
+}
+

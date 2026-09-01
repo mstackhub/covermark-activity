@@ -28,6 +28,11 @@ CREATE TABLE IF NOT EXISTS landing_pages (
     meta_description TEXT,
     redirect_url TEXT,
     button_layout TEXT DEFAULT 'vertical',
+    audio_url TEXT DEFAULT '',
+    audio_enabled INTEGER DEFAULT 0,
+    audio_show_icon INTEGER DEFAULT 1,
+    audio_volume REAL DEFAULT 0.5,
+    audio_loop INTEGER DEFAULT 1,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
 );

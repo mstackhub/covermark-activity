@@ -227,8 +227,8 @@ module.exports = async (req, res) => {
 
       const batchStatements = [
         {
-          sql: `INSERT INTO landing_pages (id, title, headline, message, slug, image_url, status, publish_at, expire_at, seo_title, meta_description, redirect_url, button_layout, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+          sql: `INSERT INTO landing_pages (id, title, headline, message, slug, image_url, status, publish_at, expire_at, seo_title, meta_description, redirect_url, button_layout, audio_url, audio_enabled, audio_show_icon, audio_volume, audio_loop, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
           args: [
             lpId,
             data.title || '',
@@ -243,6 +243,11 @@ module.exports = async (req, res) => {
             data.meta_description || '',
             data.redirect_url || '',
             data.button_layout || 'vertical',
+            data.audio_url || '',
+            data.audio_enabled ? 1 : 0,
+            data.audio_show_icon !== undefined ? (data.audio_show_icon ? 1 : 0) : 1,
+            data.audio_volume !== undefined ? Number(data.audio_volume) : 0.5,
+            data.audio_loop !== undefined ? (data.audio_loop ? 1 : 0) : 1,
             now,
             now
           ]
@@ -304,6 +309,8 @@ module.exports = async (req, res) => {
                   title = ?, headline = ?, message = ?, slug = ?, image_url = ?,
                   status = ?, publish_at = ?, expire_at = ?, seo_title = ?,
                   meta_description = ?, redirect_url = ?, button_layout = ?,
+                  audio_url = ?, audio_enabled = ?, audio_show_icon = ?,
+                  audio_volume = ?, audio_loop = ?,
                   updated_at = ?
                 WHERE id = ?;`,
           args: [
@@ -319,6 +326,11 @@ module.exports = async (req, res) => {
             data.meta_description || '',
             data.redirect_url || '',
             data.button_layout || 'vertical',
+            data.audio_url || '',
+            data.audio_enabled ? 1 : 0,
+            data.audio_show_icon !== undefined ? (data.audio_show_icon ? 1 : 0) : 1,
+            data.audio_volume !== undefined ? Number(data.audio_volume) : 0.5,
+            data.audio_loop !== undefined ? (data.audio_loop ? 1 : 0) : 1,
             now,
             data.id
           ]
@@ -403,8 +415,8 @@ module.exports = async (req, res) => {
 
       const batchStatements = [
         {
-          sql: `INSERT INTO landing_pages (id, title, headline, message, slug, image_url, status, publish_at, expire_at, seo_title, meta_description, redirect_url, button_layout, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?, ?);`,
+          sql: `INSERT INTO landing_pages (id, title, headline, message, slug, image_url, status, publish_at, expire_at, seo_title, meta_description, redirect_url, button_layout, audio_url, audio_enabled, audio_show_icon, audio_volume, audio_loop, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
           args: [
             newLpId,
             (sourceLp.title || '') + ' (คัดลอก)',
@@ -418,6 +430,11 @@ module.exports = async (req, res) => {
             sourceLp.meta_description || '',
             sourceLp.redirect_url || '',
             sourceLp.button_layout || 'vertical',
+            sourceLp.audio_url || '',
+            sourceLp.audio_enabled || 0,
+            sourceLp.audio_show_icon !== undefined ? sourceLp.audio_show_icon : 1,
+            sourceLp.audio_volume !== undefined ? sourceLp.audio_volume : 0.5,
+            sourceLp.audio_loop !== undefined ? sourceLp.audio_loop : 1,
             now,
             now
           ]
@@ -551,8 +568,8 @@ module.exports = async (req, res) => {
         const now = new Date().toISOString();
         const batchStatements = [
           {
-            sql: `INSERT INTO landing_pages (id, title, headline, message, slug, image_url, status, publish_at, expire_at, seo_title, meta_description, redirect_url, button_layout, created_at, updated_at)
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            sql: `INSERT INTO landing_pages (id, title, headline, message, slug, image_url, status, publish_at, expire_at, seo_title, meta_description, redirect_url, button_layout, audio_url, audio_enabled, audio_show_icon, audio_volume, audio_loop, created_at, updated_at)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                   ON CONFLICT(id) DO UPDATE SET
                     title = excluded.title,
                     headline = excluded.headline,
@@ -566,6 +583,11 @@ module.exports = async (req, res) => {
                     meta_description = excluded.meta_description,
                     redirect_url = excluded.redirect_url,
                     button_layout = excluded.button_layout,
+                    audio_url = excluded.audio_url,
+                    audio_enabled = excluded.audio_enabled,
+                    audio_show_icon = excluded.audio_show_icon,
+                    audio_volume = excluded.audio_volume,
+                    audio_loop = excluded.audio_loop,
                     updated_at = excluded.updated_at;`,
             args: [
               dataToRestore.id,
@@ -581,6 +603,11 @@ module.exports = async (req, res) => {
               dataToRestore.meta_description || '',
               dataToRestore.redirect_url || '',
               dataToRestore.button_layout || 'vertical',
+              dataToRestore.audio_url || '',
+              dataToRestore.audio_enabled ? 1 : 0,
+              dataToRestore.audio_show_icon !== undefined ? (dataToRestore.audio_show_icon ? 1 : 0) : 1,
+              dataToRestore.audio_volume !== undefined ? Number(dataToRestore.audio_volume) : 0.5,
+              dataToRestore.audio_loop !== undefined ? (dataToRestore.audio_loop ? 1 : 0) : 1,
               dataToRestore.created_at || now,
               now
             ]
