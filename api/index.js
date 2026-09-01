@@ -662,6 +662,22 @@ module.exports = async (req, res) => {
       });
     }
 
+    // Audio Upload (Direct Base64 Data URI storage)
+    if (action === 'uploadAudio') {
+      const { mimeType, base64Data, fileName } = params;
+      if (!base64Data) {
+        return res.status(400).json({ success: false, message: 'Missing audio data' });
+      }
+      const dataUri = `data:${mimeType || 'audio/mpeg'};base64,${base64Data}`;
+      return res.json({
+        success: true,
+        data: {
+          url: dataUri,
+          name: fileName || 'audio.mp3'
+        }
+      });
+    }
+
     return res.status(400).json({ success: false, message: 'Unknown action: ' + action });
   } catch (error) {
     console.error('API Handler Error:', error);

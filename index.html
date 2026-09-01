@@ -495,14 +495,24 @@
                         </select>
                       </div>
 
-                      <!-- Audio URL Input with Test Play Button -->
+                      <!-- Audio URL Input with Upload MP3 & Test Play Button -->
                       <div>
-                        <label for="builder-audio-url" style="font-size: 12px; font-weight: 600; margin-bottom: 4px; display: block;">ลิงก์ไฟล์เสียง (Audio URL - mp3, m4a, wav)</label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                          <label for="builder-audio-url" style="font-size: 12px; font-weight: 600; margin: 0;">ไฟล์เสียงเพลง (Audio File / URL)</label>
+                          <button type="button" class="btn btn-secondary btn-sm" id="builder-audio-upload-btn" style="font-size: 11px; padding: 3px 10px; display: inline-flex; align-items: center; gap: 5px;">
+                            📁 อัปโหลดไฟล์ MP3 จากเครื่อง
+                          </button>
+                          <input type="file" id="builder-audio-file-input" accept="audio/mp3,audio/mpeg,audio/wav,audio/m4a,audio/aac,audio/*" style="display: none;">
+                        </div>
                         <div style="display: flex; gap: 8px;">
-                          <input type="url" id="builder-audio-url" class="input-control" placeholder="https://domain.com/sound.mp3" style="flex: 1;">
+                          <input type="text" id="builder-audio-url" class="input-control" placeholder="https://domain.com/sound.mp3 หรือกดปุ่มอัปโหลดด้านบน" style="flex: 1; font-size: 13px;">
                           <button type="button" class="btn btn-secondary btn-sm" id="builder-audio-test-btn" style="white-space: nowrap; padding: 0 14px;">
                             ▶️ ทดลองฟัง
                           </button>
+                        </div>
+                        <div id="audio-upload-spinner" style="display: none; font-size: 12px; color: var(--color-primary); margin-top: 6px; align-items: center; gap: 6px;">
+                          <span style="display:inline-block; width:12px; height:12px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite;"></span>
+                          กำลังประมวลผลไฟล์เสียง โปรดรอสักครู่...
                         </div>
                       </div>
 

@@ -2055,6 +2055,100 @@ function setupEventListeners() {
   if (audioTestBtn) {
     audioTestBtn.addEventListener('click', toggleAudioPreview);
   }
+
+  // ── Audio File Upload Events ──
+  const audioUploadBtn = document.getElementById('builder-audio-upload-btn');
+  const audioFileInput = document.getElementById('builder-audio-file-input');
+
+  if (audioUploadBtn && audioFileInput) {
+    audioUploadBtn.addEventListener('click', () => {
+      audioFileInput.value = "";
+      audioFileInput.click();
+    });
+
+    audioFileInput.addEventListener('change', handleAudioFileUpload);
+  }
+}
+
+// ── Audio Upload Handler ──
+function setAudioUploadLoading(isLoading) {
+  const spinner = document.getElementById('audio-upload-spinner');
+  const uploadBtn = document.getElementById('builder-audio-upload-btn');
+  if (spinner) spinner.style.display = isLoading ? 'flex' : 'none';
+  if (uploadBtn) {
+    uploadBtn.disabled = isLoading;
+    uploadBtn.style.opacity = isLoading ? '0.6' : '1';
+  }
+}
+
+async function handleAudioFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Max 8MB
+  const maxBytes = 8 * 1024 * 1024;
+  if (file.size > maxBytes) {
+    showToast("ขนาดไฟล์เสียงใหญ่เกิน 8MB กรุณาเลือกไฟล์ที่ขนาดเล็กกว่า 8MB เพื่อความเร็วในการโหลด", "warning");
+    return;
+  }
+
+  setAudioUploadLoading(true);
+  showToast(`กำลังประมวลผลไฟล์ ${file.name}...`, "info");
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async function(evt) {
+    try {
+      const dataUri = evt.target.result;
+      const mimeType = file.type || 'audio/mpeg';
+      const base64Data = dataUri.split(',')[1];
+
+      // Upload via Serverless API
+      const ip = await fetchIp();
+      const response = await fetch(STATE.apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "uploadAudio",
+          apiKey: STATE.apiKey,
+          fileName: file.name,
+          mimeType: mimeType,
+          base64Data: base64Data,
+          admin: STATE.currentAdmin ? STATE.currentAdmin.name : 'admin',
+          ip: ip
+        })
+      });
+
+      const result = await response.json();
+      setAudioUploadLoading(false);
+
+      if (result.success && result.data && result.data.url) {
+        document.getElementById('builder-audio-url').value = result.data.url;
+        document.getElementById('builder-audio-preset').value = "";
+        showToast(`อัปโหลดไฟล์เสียง "${file.name}" เรียบร้อยแล้ว`, "success");
+        stopAudioPreview();
+      } else {
+        // Fallback to local Data URI if needed
+        document.getElementById('builder-audio-url').value = dataUri;
+        document.getElementById('builder-audio-preset').value = "";
+        showToast(`เตรียมไฟล์เสียง "${file.name}" พร้อมใช้งาน`, "success");
+        stopAudioPreview();
+      }
+    } catch (err) {
+      setAudioUploadLoading(false);
+      // Fallback directly to client Data URI
+      const dataUri = evt.target.result;
+      document.getElementById('builder-audio-url').value = dataUri;
+      document.getElementById('builder-audio-preset').value = "";
+      showToast(`เตรียมไฟล์เสียง "${file.name}" พร้อมใช้งาน`, "success");
+      stopAudioPreview();
+    }
+  };
+
+  reader.onerror = function() {
+    setAudioUploadLoading(false);
+    showToast("ไม่สามารถอ่านไฟล์เสียงได้", "danger");
+  };
 }
 
 // ── Audio Preview in Admin ──
